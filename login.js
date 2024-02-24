@@ -37,6 +37,18 @@ const sendOTP = (cp = () => {}) => {
   }
 };
 
+function clientSideRandomNotification() {
+  const notifBody = `This Notification is sent from the app main thread!`;
+  const notifImg = `/logo.jpeg`;
+  const notifTitle = `Client-Side Notification`;
+  const options = {
+    body: notifBody,
+    icon: notifImg,
+  };
+  new Notification(notifTitle, options);
+  setTimeout(randomNotification, 30000);
+}
+
 (() => {
   registerServiceWorker();
   window.addEventListener("DOMContentLoaded", () => {
