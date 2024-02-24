@@ -1,21 +1,17 @@
-const caching = "caching-v1";
+const caching = "advanced-pwa-v1";
+const cacheList = ["/", "/home.html", "/login.js", "/logo.jpeg", "/manifest.webmanifest", "/style.css"];
 
 self.addEventListener("install", (event) => {
-  console.log("V1 installing…");
   event.waitUntil(
     caches.open(caching).then((cache) => {
-      return cache.addAll(["/", "home.html", "login.js", "logo.jpeg", "manifest.webmanifest", "style.css"]);
+      return cache.addAll(cacheList);
     })
   );
 });
 
-self.addEventListener("activate", (event) => {
-  console.log("V1 now ready to handle fetches!");
-});
-
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (url.origin == location.origin && url.pathname == "/dog.svg") {
-    event.respondWith(caches.match("/cat.svg"));
+  if (cacheList.includes(url.pathname)) {
+    event.respondWith(caches.match(event.request));
   }
 });
