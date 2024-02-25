@@ -14,6 +14,7 @@ function clientSideRandomNotification() {
 (() => {
   window.addEventListener("DOMContentLoaded", () => {
     const requestNotification = document.getElementById("request-notification");
+    const serverPush = document.getElementById("server-push");
 
     requestNotification.addEventListener("click", () => {
       Notification.requestPermission().then((result) => {
@@ -22,6 +23,19 @@ function clientSideRandomNotification() {
         }
       });
       interval = setInterval(clientSideRandomNotification, 30000);
+    });
+
+    serverPush.addEventListener("click", () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      navigator.serviceWorker.getRegistration().then(reg => {
+        reg.pushManager.subscribe({
+          userVisibleOnly: true
+        }).then(sub => {
+          console.log(JSON.stringify(sub));
+        });
+      })
     });
   });
 })();
