@@ -1,8 +1,18 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js'
+// If you enabled Analytics in your project, add the Firebase SDK for Google Analytics
+// import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js'
+
+// // Add Firebase products that you want to use
+// import { getAuth } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js'
+// import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js'
+import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging.js'
+
+
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
       const registration = await navigator
-        .serviceWorker.register("sw.js", {
+        .serviceWorker.register("firebase-messaging-sw.js", {
           scope: "./",
         });
       if (registration.installing) {
@@ -37,6 +47,27 @@ const sendOTP = (cp = () => {}) => {
   }
 };
 
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDbxL8cbXhzvBWTGUTXa2XBOGx2X453rmw",
+  authDomain: "book-a-service-88145.firebaseapp.com",
+  databaseURL: "https://book-a-service-88145.firebaseio.com",
+  projectId: "book-a-service-88145",
+  storageBucket: "book-a-service-88145.appspot.com",
+  messagingSenderId: "272406522048",
+  appId: "1:272406522048:web:175c08773e2c82cff56525"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging();
+
+console.log(app, messaging, onMessage)
+
+onMessage((payload) => {
+  new Notification(payload.notification.title, payload.notification.body);
+});
+
 function clientSideRandomNotification() {
   const notifBody = `This Notification is sent from the app main thread!`;
   const notifImg = `/logo.jpeg`;
@@ -56,6 +87,7 @@ function clientSideRandomNotification() {
     const sendOtpButton = document.getElementById("send-otp");
     const otpField = document.getElementById("otp");
     const loginButton = document.getElementById("login");
+    const subscribeBtn = document.getElementById("subs");
 
     sendOtpButton.addEventListener("click", () => {
       sendOTP((otp) => {
@@ -69,6 +101,13 @@ function clientSideRandomNotification() {
       if (phoneNumber && otp) {
         window.location.href = `home.html?phone=${phoneNumber}&otp=${otp}`;
       }
+    });
+
+    subscribeBtn.addEventListener("click", () => {
+      // let promise = Notification.requestPermission();
+      getToken(messaging, {vapidKey: "BAon65Yx8U1D4T0DHSR5YFJA8tZUvaaL2BmnJnGPZltI8XyGBI2NgHzQG5RSzMsUFWtwEwtF3a1Jgdl1BQ2Lbas"}).then(token => {
+        console.log(token);
+      })
     });
   });
 })();

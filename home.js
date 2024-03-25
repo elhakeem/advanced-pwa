@@ -1,3 +1,4 @@
+
 let interval;
 
 function clientSideRandomNotification() {
